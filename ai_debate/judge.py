@@ -1,6 +1,5 @@
 from langchain.prompts import PromptTemplate
 from langchain.output_parsers.regex import RegexParser
-from langchain_groq import ChatGroq
 from langchain_anthropic import ChatAnthropic
 from langchain_openai import ChatOpenAI
 from langchain_mistralai import ChatMistralAI
@@ -30,7 +29,7 @@ class Judge:
             2. Coherence: How logically structured and clear is the response?
             3. Fact-check: How accurate and reliable are the facts and information presented in the response?
 
-            Only Provide a score (0-100) as ouput for the response based on the above criteria:
+            Only Provide a score (0-100) as output for the response based on the above criteria:
             """,
         )
         self.score_parser = RegexParser(regex=r"(\d+)", output_keys=["score"])
@@ -39,10 +38,6 @@ class Judge:
     def _initialize_model(self, model_name, api_provider, temperature):
         if api_provider == "google":
             return ChatGoogleGenerativeAI(model=model_name, temperature=temperature)
-        elif api_provider == "groq":
-            if model_name == "mixtral-8x7b-32768-groq":
-                model_name = "mixtral-8x7b-32768"
-            return ChatGroq(model=model_name, temperature=temperature)
         elif api_provider == "openai":
             return ChatOpenAI(model=model_name, temperature=temperature)
         elif api_provider == "anthropic":
