@@ -1,5 +1,4 @@
 from langchain.prompts import PromptTemplate
-from langchain_groq import ChatGroq
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_anthropic import ChatAnthropic
 from langchain_openai import ChatOpenAI
@@ -12,7 +11,6 @@ class AIModel:
     def __init__(self, model_name, api_provider, temperature):
         self.model_name = model_name
         self.api_provider = api_provider
-
         self.model = self._initialize_model(model_name, api_provider, temperature)
 
         self.argument_template = """
@@ -36,10 +34,6 @@ class AIModel:
     def _initialize_model(self, model_name, api_provider, temperature):
         if api_provider == "google":
             return ChatGoogleGenerativeAI(model=model_name, temperature=temperature)
-        elif api_provider == "groq":
-            if model_name == "mixtral-8x7b-32768-groq":
-                model_name = "mixtral-8x7b-32768"
-            return ChatGroq(model=model_name, temperature=temperature)
         elif api_provider == "openai":
             return ChatOpenAI(model=model_name, temperature=temperature)
         elif api_provider == "anthropic":
@@ -54,4 +48,5 @@ class AIModel:
         prompt = PromptTemplate.from_template(template)
         chain = prompt | self.model
         result = chain.invoke({"context": context, "topic": topic, "model_name": self.model_name})
+
         return result.content
